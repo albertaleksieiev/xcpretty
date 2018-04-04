@@ -106,9 +106,6 @@ module XCPretty
     UI_FAILING_TEST_MATCHER = /^\s{4}t = \s+\d+\.\d+s\s+Assertion Failure: (.*:\d+): (.*)$/
 
     # @regex Captured groups
-    RESTARTING_TESTS_MATCHER = /^Restarting after unexpected exit or crash in.+$/
-
-    # @regex Captured groups
     # $1 = dsym
     GENERATE_DSYM_MATCHER = /^GenerateDSYMFile \/.*\/(.*\.dSYM)/
 
@@ -144,6 +141,36 @@ module XCPretty
     # $2 = test_case
     # $3 = time
     TEST_CASE_MEASURED_MATCHER = /^[^:]*:[^:]*:\sTest Case\s'-\[(.*)\s(.*)\]'\smeasured\s\[Time,\sseconds\]\saverage:\s(\d*\.\d{3}),/
+
+    # @regex Captured groups
+    # $1 = suite
+    # $2 = test_case
+    # $3 = time
+    SWIFT_TEST_CASE_PASSED_MATCHER = /^\s*Test Case\s'(.*)\.(.*)'\spassed\s\((\d*\.\d{3})\sseconds\)/
+
+    # @regex Captured groups
+    # $1 = suite
+    # $2 = test_case
+    SWIFT_TEST_CASE_STARTED_MATCHER = /^Test Case '(.*)\.(.*)' started.$/
+
+    # @regex Captured groups
+    # $1 = suite
+    # $2 = test_case
+    SWIFT_TEST_CASE_PENDING_MATCHER = /^Test Case\s'(.*)\.(.*)PENDING'\spassed/
+
+    # @regex Captured groups
+    # $1 = suite
+    # $2 = test_case
+    # $3 = time
+    SWIFT_TEST_CASE_MEASURED_MATCHER = /^[^:]*:[^:]*:\sTest Case\s'(.*)\.(.*)'\smeasured\s\[Time,\sseconds\]\saverage:\s(\d*\.\d{3}),/
+
+
+    # @regex Captured groups
+    # $1 = file
+    # $2 = test_suite
+    # $3 = test_case
+    # $4 = reason
+    SWIFT_FAILING_TEST_MATCHER = /^\s*(.+:\d+):\serror:\s[\+\-]\[(.*)\s(.*)\]\s:(?:\s'.*'\s\[FAILED\],)?\s(.*)/
 
     PHASE_SUCCESS_MATCHER = /^\*\*\s(.*)\sSUCCEEDED\s\*\*/
 
@@ -358,11 +385,9 @@ module XCPretty
         formatter.format_cpresource($1)
       when EXECUTED_MATCHER
         format_summary_if_needed(text)
-      when RESTARTING_TESTS_MATCHER
-        formatter.format_failing_test(@test_suite, @test_case, "Test crashed", "n/a")
       when UI_FAILING_TEST_MATCHER
         formatter.format_failing_test(@test_suite, @test_case, $2, $1)
-      when FAILING_TEST_MATCHER
+      when FAILING_TEST_MATCHER, SWIFT_FAILING_TEST_MATCHER
         formatter.format_failing_test($2, $3, $4, $1)
       when FATAL_ERROR_MATCHER
         formatter.format_error($1)
@@ -380,11 +405,11 @@ module XCPretty
         formatter.format_linking($1, $2, $3)
       when MODULE_INCLUDES_ERROR_MATCHER
         formatter.format_error($1)
-      when TEST_CASE_MEASURED_MATCHER
+      when TEST_CASE_MEASURED_MATCHER, SWIFT_TEST_CASE_MEASURED_MATCHER
         formatter.format_measuring_test($1, $2, $3)
-      when TEST_CASE_PENDING_MATCHER
+      when TEST_CASE_PENDING_MATCHER, SWIFT_TEST_CASE_PENDING_MATCHER
         formatter.format_pending_test($1, $2)
-      when TEST_CASE_PASSED_MATCHER
+      when TEST_CASE_PASSED_MATCHER, SWIFT_TEST_CASE_PASSED_MATCHER
         formatter.format_passing_test($1, $2, $3)
       when PODS_ERROR_MATCHER
         formatter.format_error($1)
@@ -435,7 +460,7 @@ module XCPretty
         @tests_done = false
         @formatted_summary = false
         @failures = {}
-      when TEST_CASE_STARTED_MATCHER
+      when TEST_CASE_STARTED_MATCHER, SWIFT_TEST_CASE_STARTED_MATCHER
         @test_suite = $1
         @test_case = $2
       when TESTS_RUN_COMPLETION_MATCHER
@@ -444,8 +469,6 @@ module XCPretty
         store_failure(file: $1, test_suite: $2, test_case: $3, reason: $4)
       when UI_FAILING_TEST_MATCHER
         store_failure(file: $1, test_suite: @test_suite, test_case: @test_case, reason: $2)
-      when RESTARTING_TESTS_MATCHER
-        store_failure(file: "n/a", test_suite: @test_suite, test_case: @test_case, reason: "Test crashed")
       end
     end
 
@@ -593,4 +616,3 @@ module XCPretty
 
   end
 end
-
