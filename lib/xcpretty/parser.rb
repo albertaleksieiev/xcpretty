@@ -146,7 +146,7 @@ module XCPretty
     # $1 = suite
     # $2 = test_case
     # $3 = time
-    SWIFT_TEST_CASE_PASSED_MATCHER = /^\s*Test Case\s'(.*)\.(.*)'\spassed\s\((\d*\.\d{3})\sseconds\)/
+    SWIFT_TEST_CASE_PASSED_MATCHER = /^\s*Test Case\s'(.*)\.(.*)'\spassed\s\((\d*\.\d{1,3})\sseconds\)/
 
     # @regex Captured groups
     # $1 = suite
