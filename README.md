@@ -9,7 +9,8 @@ It does one thing, and it should do it well.
 
 ## Installation
 ``` bash
-$ gem install xcpretty
+$ gem install specific_install   
+$ gem specific_install  https://github.com/albertaleksieiev/xcpretty
 ```
 
 ## Usage
