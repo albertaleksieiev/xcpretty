@@ -173,7 +173,7 @@ module XCPretty
     # $2 = test_suite
     # $3 = test_case
     # $4 = reason
-    SWIFT_FAILING_TEST_MATCHER = /^\s*(.+:\d+):\serror:\s[\+\-]\[(.*)\s(.*)\]\s:(?:\s'.*'\s\[FAILED\],)?\s(.*)/
+    SWIFT_FAILING_TEST_MATCHER = /^\s*(.+:\d+):\serror:\s(.*)\.(.*)\s:(?:\s'.*'\s\[FAILED\],)?\s(.*)/
 
     PHASE_SUCCESS_MATCHER = /^\*\*\s(.*)\sSUCCEEDED\s\*\*/
 
